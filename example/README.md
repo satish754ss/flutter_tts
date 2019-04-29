@@ -87,7 +87,9 @@ flutterTts.setErrorHandler((msg) {
 });
 
  flutterTts.onRangeStart((start,end){
+
  })
+ 
 ```
 
 ## Getting Started
