@@ -48,7 +48,7 @@ To use this plugin :
 FlutterTts flutterTts = new FlutterTts();
 ```
 
-### speak, stop, getLanguages, setLanguage, setSpeechRate, setVolume, setPitch, isLanguageAvailable
+### speak, stop, getLanguages, setLanguage, setSpeechRate, setVolume, setPitch, isLanguageAvailable, onRangeStart
 
 ```dart
 Future _speak() async{
