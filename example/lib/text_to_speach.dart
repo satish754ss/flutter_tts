@@ -5,8 +5,6 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get_version/get_version.dart';
 import 'package:flutter/services.dart';
 
-enum TTS_STATUS { PLAYING, PAUSE, STOP }
-
 class FlutterTextToSpeach {
   GlobalKey<TextToSpeachState> textToSpeach;
 
@@ -16,7 +14,6 @@ class FlutterTextToSpeach {
   Future<dynamic> speak() => textToSpeach.currentState.speak();
 
   Future<dynamic> pause() => textToSpeach.currentState.pause();
-  void ttsStatusListener(TTS_STATUS s) {}
 }
 
 TextStyle textStyle = TextStyle(fontSize: 23, color: Colors.black);
@@ -162,11 +159,7 @@ class TextToSpeachState extends State<TextToSpeach> {
   }
 
   Future<dynamic> pause() => flutterTts.stop().then((s) {
-        if (s == 1) {
-          setState(() {
-            widget.keys.ttsStatusListener(TTS_STATUS.PAUSE);
-          });
-        }
+        if (s == 1) {}
       });
 
   Future<dynamic> speak() async {
@@ -180,7 +173,6 @@ class TextToSpeachState extends State<TextToSpeach> {
         } else {
           setState(() {});
         }
-        widget.keys.ttsStatusListener(TTS_STATUS.PLAYING);
       });
 
   onComplete() => setState(() {
