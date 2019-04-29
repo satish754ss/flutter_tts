@@ -94,6 +94,9 @@ flutterTts.setErrorHandler((msg) {
     ttsState = TtsState.stopped;
   });
 });
+
+flutterTts.onRangeStart((start,end){
+ })
 ```
 
 ## Getting Started
