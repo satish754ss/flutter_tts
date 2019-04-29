@@ -97,7 +97,6 @@ class _TestState extends State<Test> {
               FlatButton(
                   child: !isPause ? Text('Play') : Text('pause'),
                   onPressed: () async {
-                    print('page $t');
                     if (!isPause) {
                       list[t].speak().then((s) {
                         setState(() {

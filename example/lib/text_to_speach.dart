@@ -85,9 +85,10 @@ class TextToSpeachState extends State<TextToSpeach> {
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       platformVersion = await GetVersion.platformVersion;
-      print(platformVersion);
-      version = int.parse(platformVersion.split(" ").last).floor();
-      version = 7;
+      print(platformVersion.split(" "));
+      var s = platformVersion.split(" ")[1];
+      s = s.substring(0, 1);
+      version = int.parse(s).floor();
       print(version);
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
@@ -131,10 +132,10 @@ class TextToSpeachState extends State<TextToSpeach> {
         });
       }
     };
-    if (version >= 8)
-      flutterTts.ttsOnRangeStart((start, end) {
-        highlightApi26(start, end);
-      });
+
+    flutterTts.onRangeStart = (start, end) {
+      if (version >= 8) highlightApi26(0, 10);
+    };
   }
 
   highlight() {

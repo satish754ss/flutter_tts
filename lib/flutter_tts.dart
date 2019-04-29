@@ -85,8 +85,8 @@ class FlutterTts {
     initHandler = handler;
   }
 
-  void ttsOnRangeStart(Function(int, int) start) {
-    onRangeStart = start;
+  _ttsOnRangeStart(start) {
+    onRangeStart(start["start"] as int, start["end"] as int);
   }
 
   /// Platform listeners
@@ -113,8 +113,7 @@ class FlutterTts {
         }
         break;
       case "speak.onRangeStart":
-        onRangeStart(
-            call.arguments["start"] as int, call.arguments["start"] as int);
+        _ttsOnRangeStart(call.arguments);
         break;
       default:
         print('Unknowm method');

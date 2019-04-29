@@ -37,9 +37,7 @@ class TextSpeakWordsByWordsState extends State<TextSpeakWordByWord> {
         colorIndex1 = -1;
       });
     };
-    flutterTts.ttsOnRangeStart((start, end) {
-      highlight();
-    });
+
     flutterTts.errorHandler = (e) {
       print(e);
     };
