@@ -49,7 +49,7 @@ class TextToSpeachState extends State<TextToSpeach> {
 
   FlutterTts flutterTts;
   String text;
-  String startText = '', middleText = '', endText = '', holdText;
+  String startText = '', middleText = '', endText = '';
   int version = 0;
   List<String> words;
   @override
@@ -72,14 +72,12 @@ class TextToSpeachState extends State<TextToSpeach> {
       startText = '';
       middleText = '';
       endText = text;
-      holdText = text;
       incr = 0;
     });
   }
 
   getVersion() async {
     String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       platformVersion = await GetVersion.platformVersion;
       print(platformVersion.split(" "));
@@ -123,7 +121,7 @@ class TextToSpeachState extends State<TextToSpeach> {
       if (words.isEmpty) {
         setState(() {
           reset();
-          endText = holdText;
+          endText = text;
           widget.onComplete();
           words = text.split(" ");
         });
@@ -179,7 +177,6 @@ class TextToSpeachState extends State<TextToSpeach> {
         incr = 0;
       });
 
-  int colorIndex = -1;
   @override
   Widget build(BuildContext context) {
     var index = 0;
