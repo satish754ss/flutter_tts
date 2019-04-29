@@ -113,7 +113,9 @@ class FlutterTts {
         }
         break;
       case "speak.onRangeStart":
-        _ttsOnRangeStart(call.arguments);
+        if (onRangeStart != null) {
+          _ttsOnRangeStart(call.arguments);
+        }
         break;
       default:
         print('Unknowm method');

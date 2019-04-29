@@ -134,7 +134,7 @@ class TextToSpeachState extends State<TextToSpeach> {
     };
 
     flutterTts.onRangeStart = (start, end) {
-      if (version >= 8) highlightApi26(0, 10);
+      highlightApi26(start, end);
     };
   }
 
