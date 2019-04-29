@@ -86,7 +86,6 @@ class FlutterTts {
   }
 
   void ttsOnRangeStart(Function(int, int) start) {
-    print('sadsd');
     onRangeStart = start;
   }
 
