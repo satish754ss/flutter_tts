@@ -4,12 +4,12 @@ import 'package:flutter_tts_example/text_to_speach.dart';
 
 FlutterTts flutterTts = FlutterTts();
 String eng =
-    "Look at these beautiful horses and elephants! Who brought them here? squealed Ahilya. Reluctantly, she tore her eyes away from the beautiful animals – it would get dark soon! She hurried inside the temple and lit a lamp. Ahilya closed her eyes and bowed in prayer.";
+    "Look at these beautiful horses and elephants! Who brought them here? squealed Ahilya.\nReluctantly, she tore her eyes away from the beautiful animals – it would get dark soon! She hurried inside the temple and lit a lamp. Ahilya closed her eyes and bowed in prayer";
 String hindi =
-    "आजकल के समय में निबंध लिखना एक महत्वपूर्ण विषय बन चुका है, खासतौर से छात्रों के लिए। ऐसे कई अवसर आते हैं, जब आपको ";
+    "आजकल के समय में निबंध लिखना एक महत्वपूर्ण विषय बन चुका है, खासतौर से छात्रों के लिए। ऐसे कई अवसर आते हैं, जब आपको.";
 String tel = "ఒకానొకప్పుడు ఒక ఊరిలో ఒక అమాయకపు పిచుక వుండేది";
 String gujrati =
-    "એક પોપટ હતો. તેનું નામ હતુ મિઠ્ઠુરામ. તેનું ઘર હતુ એક પિંજરુ, તે જ તેની દુનિયા હતી. મિઠ્ઠુરામનો અવાજ ખૂબ સારો હતો પણ તે ફક્ત રાત્રે જ ગાતો હતો";
+    "એક પોપટ હતો. તેનું નામ હતુ મિઠ્ઠુરામ. તેનું ઘર હતુ એક પિંજરુ, તે જ તેની દુનિયા હતી. મિઠ્ઠુરામનો અવાજ ખૂબ સારો હતો પણ તે ફક્ત રાત્રે જ ગાતો હતો.";
 enum Lan { eng, hin, guj }
 void main() => runApp(MaterialApp(home: Scaffold(body: Test())));
 
@@ -23,12 +23,12 @@ class _TestState extends State<Test> {
   Lan lang = Lan.eng;
   bool isPause = false;
 
-  List<FlutterTextToSpeach> list = List<FlutterTextToSpeach>();
+  List<FlutterTextToSpeech> list = List<FlutterTextToSpeech>();
   @override
   void initState() {
     super.initState();
     for (var i = 0; i < page.length; i++) {
-      list.add(FlutterTextToSpeach());
+      list.add(FlutterTextToSpeech());
     }
 
     list.forEach((s) {
@@ -36,7 +36,7 @@ class _TestState extends State<Test> {
     });
   }
 
-  List<String> page = [eng, eng];
+  List<String> page = [eng, hindi];
   int t = 0;
   @override
   Widget build(BuildContext context) {
@@ -60,6 +60,9 @@ class _TestState extends State<Test> {
             },
             children: page.map((s) {
               return TextToSpeach(
+                playingStatus: (s) {
+                  print(s);
+                },
                 onLongPress: (s) {
                   showDialog(
                     context: context,

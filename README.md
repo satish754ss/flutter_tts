@@ -95,6 +95,7 @@ flutterTts.setErrorHandler((msg) {
   });
 });
 
+// onRangeStart work if Api level is more then 25.
 flutterTts.onRangeStart((start,end){
  })
 ```

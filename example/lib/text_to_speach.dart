@@ -5,11 +5,13 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get_version/get_version.dart';
 import 'package:flutter/services.dart';
 
-class FlutterTextToSpeach {
-  GlobalKey<TextToSpeachState> textToSpeach;
+enum TtsState { PLAYING, PAUSE }
 
-  FlutterTextToSpeach() {
-    textToSpeach = new GlobalKey<TextToSpeachState>();
+class FlutterTextToSpeech {
+  GlobalKey<TextToSpeechState> textToSpeach;
+
+  FlutterTextToSpeech() {
+    textToSpeach = new GlobalKey<TextToSpeechState>();
   }
   Future<dynamic> speak() => textToSpeach.currentState.speak();
 
@@ -26,11 +28,13 @@ class TextToSpeach extends StatefulWidget {
   final Function(String) onTap;
   final Function(String) onLongPress;
   final double setSpeechRate;
-  final FlutterTextToSpeach keys;
+  final FlutterTextToSpeech keys;
+  final Function(TtsState) playingStatus;
   TextToSpeach(
       {@required this.keys,
       @required this.fullText,
       this.setSpeechRate = .78,
+      this.playingStatus,
       this.onTap,
       this.onLongPress,
       this.onComplete,
@@ -39,10 +43,10 @@ class TextToSpeach extends StatefulWidget {
       : assert(fullText != null),
         super(key: keys.textToSpeach);
   @override
-  TextToSpeachState createState() => new TextToSpeachState();
+  TextToSpeechState createState() => new TextToSpeechState();
 }
 
-class TextToSpeachState extends State<TextToSpeach> {
+class TextToSpeechState extends State<TextToSpeach> {
   bool isPlaying = false;
   List<String> listOfLines = [];
   int incr = 0;
@@ -52,18 +56,18 @@ class TextToSpeachState extends State<TextToSpeach> {
   String startText = '', middleText = '', endText = '';
   int version = 0;
   List<String> words;
+  final regExp1 = RegExp('[\n]');
+  final regExp2 = RegExp('[!.,"-:|?–]');
+  String temp = '';
   @override
   void initState() {
     super.initState();
     flutterTts = FlutterTts();
     flutterTts.setSpeechRate(widget.setSpeechRate);
-    text = widget.fullText.trim();
-    if (!text.substring(text.length).contains(RegExp('[.]'))) {
-      text = text + '.';
-    }
-    WidgetsBinding.instance.addPostFrameCallback((_) => reset());
+    stringFormat();
     initTts();
     getVersion();
+    WidgetsBinding.instance.addPostFrameCallback((_) => reset());
   }
 
   reset() {
@@ -71,7 +75,7 @@ class TextToSpeachState extends State<TextToSpeach> {
     setState(() {
       startText = '';
       middleText = '';
-      endText = text;
+      endText = temp;
       incr = 0;
     });
   }
@@ -84,33 +88,49 @@ class TextToSpeachState extends State<TextToSpeach> {
       var s = platformVersion.split(" ")[1];
       s = s.substring(0, 1);
       version = int.parse(s).floor();
+      version = 7;
       print(version);
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
   }
 
-  initTts() {
+  stringFormat() {
     words = List<String>();
-    var string = '';
     listOfLines = List<String>();
+    text = widget.fullText.replaceAll(regExp1, ' ');
+    if (!text.substring(text.length - 1, text.length).contains(regExp2)) {
+      text = text + '.';
+    }
+    var string = '';
     words = text.split(" ");
     for (var i = 0; i < words.length; i++) {
+      if (words[i].substring(0, 1).contains(regExp2)) {
+        words.removeAt(i);
+        break;
+      }
+    }
+    temp = words.join(' ');
+    for (var i = 0; i < words.length; i++) {
       string = string + words[i] + ' ';
-      if (words[i].contains(RegExp('[,.|!]'))) {
+      if (words[i].contains(regExp2)) {
         listOfLines.add(string);
         string = '';
       }
     }
+    setState(() {});
+  }
+
+  initTts() {
     flutterTts.completionHandler = () {
       if (incr == listOfLines.length - 1) {
         setState(() {
           incr = 0;
           startText = '';
           middleText = '';
-          endText = text;
+          endText = temp;
           widget.onComplete();
-          words = text.split(" ");
+          words = temp.split(" ");
         });
       } else {
         if (version < 8) {
@@ -121,15 +141,15 @@ class TextToSpeachState extends State<TextToSpeach> {
       if (words.isEmpty) {
         setState(() {
           reset();
-          endText = text;
+          endText = temp;
           widget.onComplete();
-          words = text.split(" ");
+          words = temp.split(" ");
         });
       }
     };
 
     flutterTts.onRangeStart = (start, end) {
-      highlightApi26(start, end);
+      if (version >= 8) highlightApi26(start, end);
     };
   }
 
@@ -150,14 +170,23 @@ class TextToSpeachState extends State<TextToSpeach> {
     setState(() {
       startText = startText + middleText;
       middleText = '';
-      middleText = words.removeAt(0) + " ";
+      middleText = words.removeAt(0) + ' ';
       endText = '';
       endText = words.join(" ");
     });
   }
 
+  skipWord() {
+    setState(() {
+      startText = startText + words.removeAt(0) + ' ';
+    });
+  }
+
   Future<dynamic> pause() => flutterTts.stop().then((s) {
-        if (s == 1) {}
+        if (s == 1) {
+          if (widget.playingStatus != null)
+            widget.playingStatus(TtsState.PAUSE);
+        }
       });
 
   Future<dynamic> speak() async {
@@ -166,10 +195,12 @@ class TextToSpeachState extends State<TextToSpeach> {
   }
 
   Future<dynamic> _speak(String text) => flutterTts.speak(text).then((s) {
-        if (version < 8) {
-          highlight();
-        } else {
-          setState(() {});
+        if (s == 1) {
+          if (version < 8) {
+            highlight();
+          } else {}
+          if (widget.playingStatus != null)
+            widget.playingStatus(TtsState.PLAYING);
         }
       });
 
